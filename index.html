@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="ad.size" content="width=300,height=250">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="default.js"></script>
+    <title>maze</title>
+    <style>
+      * {
+        font-family: Georgia;
+        margin: 0;
+        padding:0;
+      }
+      body,html{
+        height: 500px;
+        width: 600px;
+        position: relative;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        cursor: pointer;
+      }
+
+      .maze_border{
+        height: 500px;
+        width: 600px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 50px 0px 0px 100px;
+        background-color: 	#BF1E3E;
+      }
+
+      #moves{
+        position: absolute;
+        top: 15px;
+        left: 0;
+        width: 300px;
+        height: 30px;
+        text-align: center;
+        font-size: 20px;
+      }
+
+
+      #up,#down,#left,#right{
+        position: absolute;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        outline: 0;
+        background-color: #F36422;
+      }
+
+
+
+      #up{
+        top: 90px;
+        left: 30px;
+      }
+
+      #down{
+        top: 160px;
+        left: 30px;
+      }
+
+      #left{
+        top: 125px;
+        left: 5px;
+      }
+
+      #right{
+        top: 125px;
+        left: 55px;
+      }
+    </style>
+  </head>
+  <body onload="onLoad();">
+    <div class="maze_border">
+      <span id="moves"><span id="counter">0</span> moves!</span>
+
+      <button type="button" id="up" onclick="onPress(1)">&#8593;</button>
+      <button type="button" id="down" onclick="onPress(2)">&#8595;</button>
+      <button type="button" id="left" onclick="onPress(3)">&#8592;</button>
+      <button type="button" id="right" onclick="onPress(4)">&#8594;</button>
+      <canvas id="mainForm"></canvas>
+    </div>
+  </body>
+</html>
