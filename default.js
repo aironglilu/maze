@@ -194,6 +194,7 @@ class Maze {
 
   }
 
+
 }
 
 var count = 0;
@@ -234,16 +235,18 @@ function onLoad() {
 
   canvas = document.getElementById("mainForm");
   ctx = canvas.getContext("2d");
-
+  ctx.canvas.addEventListener('click',clickEvent,false);
   player = new Player();
   maze = new Maze(16, 16, 20);
   document.addEventListener("keydown", onKeyDown);
+
+ 
 }
 
 
 setInterval(function () {
   document.getElementById('counter').innerText = count;
-    if (player.row==9 && player.col == 9){
+    if (player.row==maze.rows-1 && player.col == maze.cols-1){
         document.getElementById('counter').innerText = "You win with "+count;
         setTimeout(function () {
            onLoad();
@@ -281,4 +284,37 @@ function onPress(el) {
             break;
     }
     maze.redraw();
+}
+
+function clickEvent(e){
+  
+  var nextplayer = getEventPosition(e);
+    console.log(nextplayer)
+    player=nextplayer
+    maze.redraw();
+    //判断点击了那个矩形    
+    // if(p.y <= arr[0].height){
+    //   console.log('你点击了第一个矩形',p)
+    // }
+    // if(p.y>arr[0].height && p.y <= (arr[1].height+arr[1].y)){
+    //   console.log('你点击了第二个矩形',p)
+    // }
+    // if(p.y>(arr[1].height+arr[1].y) && p.y <= (arr[2].height+arr[2].y)){
+    //   console.log('你点击了第三个矩形',p)
+    // }
+
+    function getEventPosition(ev){
+      var x, y;
+      if (ev.layerX || ev.layerX == 0) {
+        x = ev.layerX;
+        y = ev.layerY;
+      } else if (ev.offsetX || ev.offsetX == 0) { // Opera
+        x = ev.offsetX;
+        y = ev.offsetY;
+      }
+      x=parseInt(x/maze.cellSize);
+      y=parseInt(y/maze.cellSize);
+      return {col: x, row: y};
+    }   
+   
 }
