@@ -4,12 +4,22 @@ let maze;
 let mazeHeight;
 let mazeWidth;
 let player;
+let n;//迷宫的大小
 
 class Player {
 
   constructor() {
+    //横坐标
     this.col = 0;
+    //纵坐标
     this.row = 0;
+    //穿墙道具获取的数量，拥有道具时，提示玩家是否使用道具
+    this.tools = 0;
+    //获得金币数量
+    this.coins = 0;
+    //生命值初始化为3 ，遇到伤害-1, 值为0时，表示死完
+    this.life = 3;
+
   }
 
 }
@@ -143,10 +153,10 @@ class Maze {
   }
 
   hasUnvisitedNeighbor(mazeCell) {
-    return ((mazeCell.col !== 0               && !this.cells[mazeCell.col - 1][mazeCell.row].visited) ||
-            (mazeCell.col !== (this.cols - 1) && !this.cells[mazeCell.col + 1][mazeCell.row].visited) ||
-            (mazeCell.row !== 0               && !this.cells[mazeCell.col][mazeCell.row - 1].visited) ||
-            (mazeCell.row !== (this.rows - 1) && !this.cells[mazeCell.col][mazeCell.row + 1].visited));
+    return ((mazeCell.col !== 0 && !this.cells[mazeCell.col - 1][mazeCell.row].visited) ||
+      (mazeCell.col !== (this.cols - 1) && !this.cells[mazeCell.col + 1][mazeCell.row].visited) ||
+      (mazeCell.row !== 0 && !this.cells[mazeCell.col][mazeCell.row - 1].visited) ||
+      (mazeCell.row !== (this.rows - 1) && !this.cells[mazeCell.col][mazeCell.row + 1].visited));
   }
 
   redraw() {
@@ -233,88 +243,205 @@ function onKeyDown(event) {
 
 function onLoad() {
 
+  n = 16;
   canvas = document.getElementById("mainForm");
   ctx = canvas.getContext("2d");
-  ctx.canvas.addEventListener('click',clickEvent,false);
+  ctx.canvas.addEventListener('click', clickEvent, false);
   player = new Player();
-  maze = new Maze(16, 16, 20);
+  maze = new Maze(n, n, 20);
   document.addEventListener("keydown", onKeyDown);
 
- 
+
 }
 
 
 setInterval(function () {
   document.getElementById('counter').innerText = count;
-    if (player.row==maze.rows-1 && player.col == maze.cols-1){
-        document.getElementById('counter').innerText = "You win with "+count;
-        setTimeout(function () {
-           onLoad();
-           count = 0;
-            document.getElementById('counter').innerText = count;
-        },1000)
-    }
-},1000);
+  if (player.row == maze.rows - 1 && player.col == maze.cols - 1) {
+    document.getElementById('counter').innerText = "You win with " + count;
+    setTimeout(function () {
+      onLoad();
+      count = 0;
+      document.getElementById('counter').innerText = count;
+    }, 1000)
+  }
+}, 1000);
 
 
 function onPress(el) {
-    count++;
-    switch (el) {
-        case 3:
-            if (!maze.cells[player.col][player.row].westWall) {
-                player.col -= 1;
-            }
-            break;
-        case 4:
-            if (!maze.cells[player.col][player.row].eastWall) {
-                player.col += 1;
-            }
-            break;
-        case 2:
-            if (!maze.cells[player.col][player.row].southWall) {
-                player.row += 1;
-            }
-            break;
-        case 1:
-            if (!maze.cells[player.col][player.row].northWall) {
-                player.row -= 1;
-            }
-            break;
-        default:
-            break;
-    }
-    maze.redraw();
+  count++;
+  switch (el) {
+    case 3:
+      if (!maze.cells[player.col][player.row].westWall) {
+        player.col -= 1;
+      }
+      break;
+    case 4:
+      if (!maze.cells[player.col][player.row].eastWall) {
+        player.col += 1;
+      }
+      break;
+    case 2:
+      if (!maze.cells[player.col][player.row].southWall) {
+        player.row += 1;
+      }
+      break;
+    case 1:
+      if (!maze.cells[player.col][player.row].northWall) {
+        player.row -= 1;
+      }
+      break;
+    default:
+      break;
+  }
+  maze.redraw();
 }
 
-function clickEvent(e){
-  
-  var nextplayer = getEventPosition(e);
-    console.log(nextplayer)
-    player=nextplayer
-    maze.redraw();
-    //判断点击了那个矩形    
-    // if(p.y <= arr[0].height){
-    //   console.log('你点击了第一个矩形',p)
-    // }
-    // if(p.y>arr[0].height && p.y <= (arr[1].height+arr[1].y)){
-    //   console.log('你点击了第二个矩形',p)
-    // }
-    // if(p.y>(arr[1].height+arr[1].y) && p.y <= (arr[2].height+arr[2].y)){
-    //   console.log('你点击了第三个矩形',p)
-    // }
+function clickEvent(e) {
 
-    function getEventPosition(ev){
-      var x, y;
-      if (ev.layerX || ev.layerX == 0) {
-        x = ev.layerX;
-        y = ev.layerY;
-      } else if (ev.offsetX || ev.offsetX == 0) { // Opera
-        x = ev.offsetX;
-        y = ev.offsetY;
+  var nextplayer = getEventPosition(e);
+  console.log(nextplayer)
+
+  BFS(player, nextplayer)  
+  //判断点击了那个矩形    
+  // if(p.y <= arr[0].height){
+  //   console.log('你点击了第一个矩形',p)
+  // }
+  // if(p.y>arr[0].height && p.y <= (arr[1].height+arr[1].y)){
+  //   console.log('你点击了第二个矩形',p)
+  // }
+  // if(p.y>(arr[1].height+arr[1].y) && p.y <= (arr[2].height+arr[2].y)){
+  //   console.log('你点击了第三个矩形',p)
+  // }
+
+  function getEventPosition(ev) {
+    var x, y;
+    if (ev.layerX || ev.layerX == 0) {
+      x = ev.layerX;
+      y = ev.layerY;
+    } else if (ev.offsetX || ev.offsetX == 0) { // Opera
+      x = ev.offsetX;
+      y = ev.offsetY;
+    }
+    x = parseInt(x / maze.cellSize);
+    y = parseInt(y / maze.cellSize);
+    return { col: x, row: y };
+  }
+
+}
+
+class Position						//队列元素类型
+{
+  constructor() {
+    this.x = 0;					//当前方块位置
+    this.y = 0;					//当前方块位置
+    this.pre = 0;       //前驱方块的下标
+  }
+};
+let qu = [];
+let V = [-1, 0, 1, 0];			//垂直偏移量
+let H = [0, 1, 0, -1];			//水平偏移量,下标对应方位号0～3
+let D = ['eastWall', 'northWall', 'westWall', 'southWall'];			//方向
+
+
+function BFS(curr, des) {    //求从(x,y)出发的一条迷宫路径
+  front = -1;
+  rear = -1;				//初始化队头和队尾
+
+  //Position p,p1,p2;
+  var p = new Position(), p1 = new Position();
+  p.x = curr.col;
+  p.y = curr.row;
+  p.pre = -1;			//建立入口结点
+  maze.cells[p.x][p.y].sign = '*';
+
+  rear++;
+  qu[rear] = p;				//入口方块进队
+  while (front != rear)				//队不空循环
+  {
+    front++; p1 = qu[front];		//出队方块p1;
+    if (p1.x == des.col && p1.y == des.row)	//找到出口
+    {
+      disppath(front);		//输出路径
+      return;
+    }
+    for (let k = 0; k < 4; k++)		//试探p1的每个相邻方位 为什么是4
+    {
+      let p2 = new Position();
+      p2.x = p1.x + V[k];			//找到p1的相邻方块p2
+      p2.y = p1.y + H[k];
+      //if (p2.x>=0 && p2.y>=0 && p2.x<n && p2.y<n &&( Maze[p2.x][p2.y]=='O'||Maze[p2.x][p2.y]==' '))
+      //if (p2.x>=0 && p2.y>=0 && p2.x<n && p2.y<n &&( Maze[p2.x][p2.y]!='X'&&Maze[p2.x][p2.y]!='*'))
+
+      if (p2.x >= 0 && p2.y >= 0 && p2.x < n && p2.y < n&&(!maze.cells[p2.x][p2.y][D[k]] && maze.cells[p2.x][p2.y].sign != '*')) {
+        
+        //方块p2有效并且可走
+          //				
+          
+          maze.cells[p2.x][p2.y].sign = '*';	//改为'*'避免重复查找
+          p2.pre = front;
+          rear++;
+          qu[rear] = p2;	//方块p2进队
+			/*	
+				*/
       }
-      x=parseInt(x/maze.cellSize);
-      y=parseInt(y/maze.cellSize);
-      return {col: x, row: y};
-    }   
-   
+    }
+  }
+}
+
+function disppath(front)			//输出一条迷宫路径
+{
+  let i, j;
+  for (i = 0; i < n; i++)				//将所有'*'改为'O'
+    for (j = 0; j < n; j++)
+      if (maze.cells[i][j].sign == '*')
+        maze.cells[i][j].sign = 'O';
+  let k = front;
+  let path=[];
+  while (k != -1)					//即路径上的方块改为' '
+  {
+
+    let mark = maze.cells[qu[k].x][qu[k].y];
+    switch (mark.sign) {
+      case '1':
+        coins++; break;
+      case '2':
+        tools++; break;
+      case '3':
+        life--;
+        if (life == 0) console.log("Dead\n");
+        break;
+    }
+    //Mazebak[qu[k].x][qu[k].y]=' ';
+    console.log(qu[k].x, qu[k].y);
+    path.push(qu[k])
+    //	k--;
+    k = qu[k].pre;
+  }
+
+  console.log(path)
+  var index= path.length-1;
+  go();
+  for (let index = path.length-1; index >= 0; index--) {
+    const element = path[index];
+    
+  }
+  function go(){
+    player.col= path[index].x;
+    player.row= path[index].y;
+    maze.redraw(); 
+    index--;
+    if(index>=0)
+    setTimeout(go,200);
+  }
+  //player = nextplayer
+  
+ // console.log("当前获得金币%d,道具%d,伤害%d\n", coins, tools, life);
+  // for (i=0; i<n;i++)				//输出迷宫路径
+  // {	console.log("    ");
+  // 	for(let j=0; j<n;j++)
+  //   console.log("%c",Mazebak[i][j]);
+  // 	console.log("\n");
+  // }
+  
 }
