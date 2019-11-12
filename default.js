@@ -241,6 +241,7 @@ function onKeyDown(event) {
   maze.redraw();
 }
 
+let isGoing=false;
 function onLoad() {
 
   n = 16;
@@ -298,21 +299,12 @@ function onPress(el) {
 }
 
 function clickEvent(e) {
-
+  if(isGoing)return;
+  isGoing=true;
   var nextplayer = getEventPosition(e);
   console.log(nextplayer)
 
   BFS(player, nextplayer)  
-  //判断点击了那个矩形    
-  // if(p.y <= arr[0].height){
-  //   console.log('你点击了第一个矩形',p)
-  // }
-  // if(p.y>arr[0].height && p.y <= (arr[1].height+arr[1].y)){
-  //   console.log('你点击了第二个矩形',p)
-  // }
-  // if(p.y>(arr[1].height+arr[1].y) && p.y <= (arr[2].height+arr[2].y)){
-  //   console.log('你点击了第三个矩形',p)
-  // }
 
   function getEventPosition(ev) {
     var x, y;
@@ -385,8 +377,9 @@ function BFS(curr, des) {    //求从(x,y)出发的一条迷宫路径
 			/*	
 				*/
       }
-    }
+    }    
   }
+  isGoing=false;
 }
 
 function disppath(front)			//输出一条迷宫路径
@@ -413,13 +406,11 @@ function disppath(front)			//输出一条迷宫路径
         break;
     }
     //Mazebak[qu[k].x][qu[k].y]=' ';
-    console.log(qu[k].x, qu[k].y);
+    
     path.push(qu[k])
     //	k--;
     k = qu[k].pre;
-  }
-
-  console.log(path)
+  }  
   var index= path.length-1;
   go();
   for (let index = path.length-1; index >= 0; index--) {
@@ -433,6 +424,8 @@ function disppath(front)			//输出一条迷宫路径
     index--;
     if(index>=0)
     setTimeout(go,200);
+    else
+    isGoing=false;
   }
   //player = nextplayer
   
