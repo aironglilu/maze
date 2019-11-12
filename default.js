@@ -44,11 +44,16 @@ class Maze {
 
   constructor(cols, rows, cellSize) {
 
-    this.backgroundColor = "#F36422";
+    this.backgroundColor = "#ffffff";
     this.cols = cols;
     this.endColor = "#fefea8";
     this.mazeColor = "#000000";
-    this.playerColor = "#008142";
+    this.playerColor = "#0fa7ff";
+
+    this.coinsColor = "gold";//金币的颜色
+    this.toolsColor = "green";//道具的颜色
+    this.monsterColor = "red";//怪物的颜色
+
     this.rows = rows;
     this.cellSize = cellSize;
 
@@ -85,6 +90,7 @@ class Maze {
     let dir;
     let foundNeighbor;
     let nextCell;
+    
 
     while (this.hasUnvisited(this.cells)) {
       currCell = stack[stack.length - 1];
@@ -94,6 +100,8 @@ class Maze {
         foundNeighbor = false;
         do {
           dir = Math.floor(Math.random() * 4);
+          var sign= Math.floor(Math.random() * (this.cols*2));
+          if(sign>3||currCell.attribute==0)sign=0;          
           switch (dir) {
             case 0:
               if (currCell.col !== (this.cols - 1) && !this.cells[currCell.col + 1][currCell.row].visited) {
@@ -101,6 +109,7 @@ class Maze {
                 nextCell = this.cells[currCell.col + 1][currCell.row];
                 nextCell.westWall = false;
                 foundNeighbor = true;
+                currCell.attribute=sign;
               }
               break;
             case 1:
@@ -109,6 +118,7 @@ class Maze {
                 nextCell = this.cells[currCell.col][currCell.row - 1];
                 nextCell.southWall = false;
                 foundNeighbor = true;
+                currCell.attribute=sign;
               }
               break;
             case 2:
@@ -117,6 +127,7 @@ class Maze {
                 nextCell = this.cells[currCell.col][currCell.row + 1];
                 nextCell.northWall = false;
                 foundNeighbor = true;
+                currCell.attribute=sign;
               }
               break;
             case 3:
@@ -125,9 +136,12 @@ class Maze {
                 nextCell = this.cells[currCell.col - 1][currCell.row];
                 nextCell.eastWall = false;
                 foundNeighbor = true;
+                currCell.attribute=sign;
               }
               break;
           }
+          if(currCell.row==0&&currCell.col==0)
+          currCell.attribute=0;
           if (foundNeighbor) {
             stack.push(nextCell);
           }
@@ -196,11 +210,34 @@ class Maze {
           ctx.lineTo(col * this.cellSize, (row + 1) * this.cellSize);
           ctx.stroke();
         }
+        switch (this.cells[col][row].attribute) {
+          case 1:
+                ctx.fillStyle = this.coinsColor;
+                ctx.fillRect((col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);            
+            break;
+            case 2:
+                ctx.fillStyle = this.toolsColor;
+                ctx.fillRect((col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
+            break;
+            case 3:
+                ctx.fillStyle = this.monsterColor;
+                ctx.fillRect((col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
+            break;
+        
+          default:
+            break;
+        }
       }
     }
 
     ctx.fillStyle = this.playerColor;
-    ctx.fillRect((player.col * this.cellSize) + 2, (player.row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
+    ctx.beginPath();
+    ctx.moveTo((player.col * this.cellSize) + 2,(player.row * this.cellSize) +  this.cellSize-2);
+    ctx.lineTo((player.col * this.cellSize) +  (this.cellSize/2),(player.row * this.cellSize) + 2);
+    ctx.lineTo((player.col * this.cellSize) + this.cellSize-2,(player.row * this.cellSize) +  this.cellSize-2);
+    ctx.fill();
+    //console.log((player.col * this.cellSize) + 14, (player.row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
+    //ctx.fillRect((player.col * this.cellSize) + 2, (player.row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
 
   }
 
@@ -252,19 +289,16 @@ function onLoad() {
   maze = new Maze(n, n, 20);
   document.addEventListener("keydown", onKeyDown);
 
-
+  refreshTip();
 }
 
 
-setInterval(function () {
-  document.getElementById('counter').innerText = count;
+var interval= setInterval(function () {
+  
   if (player.row == maze.rows - 1 && player.col == maze.cols - 1) {
     document.getElementById('counter').innerText = "You win with " + count;
-    setTimeout(function () {
-      onLoad();
-      count = 0;
-      document.getElementById('counter').innerText = count;
-    }, 1000)
+  alert("你赢了!");
+  clearInterval(interval);
   }
 }, 1000);
 
@@ -395,16 +429,16 @@ function disppath(front)			//输出一条迷宫路径
   {
 
     let mark = maze.cells[qu[k].x][qu[k].y];
-    switch (mark.sign) {
-      case '1':
-        coins++; break;
-      case '2':
-        tools++; break;
-      case '3':
-        life--;
-        if (life == 0) console.log("Dead\n");
-        break;
-    }
+    // switch (mark.sign) {
+    //   case '1':
+    //     coins++; break;
+    //   case '2':
+    //     tools++; break;
+    //   case '3':
+    //     life--;
+    //     if (life == 0) console.log("Dead\n");
+    //     break;
+    // }
     //Mazebak[qu[k].x][qu[k].y]=' ';
     
     path.push(qu[k])
@@ -421,9 +455,28 @@ function disppath(front)			//输出一条迷宫路径
     player.col= path[index].x;
     player.row= path[index].y;
     maze.redraw(); 
-    index--;
+    index--;    
+        switch (maze.cells[player.col][player.row].attribute) {
+      case 1:
+          player.coins++; break;
+      case 2:
+          player.life++; break;
+      case 3:
+          player.life--;
+        if (player.life == 0) {
+          alert('你死了');
+          console.log("Dead\n");
+          return;
+        }
+        break;
+    }
+    refreshTip();
+
     if(index>=0)
-    setTimeout(go,200);
+    setTimeout(function(){
+      maze.cells[player.col][player.row].attribute=0;
+      go();
+    },200);
     else
     isGoing=false;
   }
@@ -437,4 +490,9 @@ function disppath(front)			//输出一条迷宫路径
   // 	console.log("\n");
   // }
   
+}
+
+function refreshTip(){
+  document.getElementById("sp_coin").innerHTML=(player.coins);
+  document.getElementById("sp_blood").innerHTML=(player.life);
 }

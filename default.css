@@ -11,6 +11,7 @@ body,html{
   left: 0;
   overflow: hidden;
   cursor: pointer;
+  background-color: 	black;
 }
 
 .maze_border{
@@ -20,7 +21,7 @@ body,html{
   top: 0;
   left: 0;
   padding: 50px 0px 0px 100px;
-  background-color: 	#BF1E3E;
+  /* background-color: 	#BF1E3E; */
 }
 
 #moves{
@@ -63,4 +64,8 @@ body,html{
 #right{
   top: 125px;
   left: 55px;
+}
+
+#div_tip{
+  color: #ffff;
 }
