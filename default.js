@@ -115,7 +115,7 @@ class Maze {
         foundNeighbor = false;
         do {
           dir = Math.floor(Math.random() * 4);
-          var sign = Math.floor(Math.random() * (this.cols * 2));
+          var sign = Math.floor(Math.random() * (this.cols * 2));//物品出现的概率
           if (sign > 3 || currCell.attribute == 0) sign = 0;
           switch (dir) {
             case 0:
@@ -195,8 +195,6 @@ class Maze {
     ctx.fillStyle = this.backgroundColor;
     ctx.fillRect(0, 0, mazeHeight, mazeWidth);
 
-    // ctx.fillStyle = this.endColor;
-    // ctx.fillRect((this.cols - 1) * this.cellSize, (this.rows - 1) * this.cellSize, this.cellSize, this.cellSize);
     ctx.drawImage(endImg,(this.cols - 1) * this.cellSize, (this.rows - 1) * this.cellSize, this.cellSize, this.cellSize);
 
     ctx.strokeStyle = this.mazeColor;
@@ -230,18 +228,12 @@ class Maze {
         }
         switch (this.cells[col][row].attribute) {
           case 1:
-            // ctx.fillStyle = this.coinsColor;
-            // ctx.fillRect((col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
             ctx.drawImage(coinsImg,(col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4)
             break;
           case 2:
-            // ctx.fillStyle = this.toolsColor;
-            // ctx.fillRect((col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
             ctx.drawImage(toolsImg,(col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4)
             break;
           case 3:
-            // ctx.fillStyle = this.monsterColor;
-            // ctx.fillRect((col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
             ctx.drawImage(monsterImg,(col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4)
             break;
 
@@ -253,16 +245,7 @@ class Maze {
 
     
     ctx.drawImage(playerImg,(player.col * this.cellSize) + 2, (player.row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4)
-
-    //ctx.fillStyle = this.playerColor;
-    // ctx.beginPath();
-    // ctx.moveTo((player.col * this.cellSize) + 2, (player.row * this.cellSize) + this.cellSize - 2);
-    // ctx.lineTo((player.col * this.cellSize) + (this.cellSize / 2), (player.row * this.cellSize) + 2);
-    // ctx.lineTo((player.col * this.cellSize) + this.cellSize - 2, (player.row * this.cellSize) + this.cellSize - 2);
-    // ctx.fill();
-    //console.log((player.col * this.cellSize) + 14, (player.row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
-    //ctx.fillRect((player.col * this.cellSize) + 2, (player.row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
-
+    
     this.cells[player.col][player.row].attribute = 0;
     refreshTip();
   }
