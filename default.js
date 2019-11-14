@@ -178,8 +178,9 @@ class Maze {
     ctx.fillStyle = this.backgroundColor;
     ctx.fillRect(0, 0, mazeHeight, mazeWidth);
 
-    ctx.fillStyle = this.endColor;
-    ctx.fillRect((this.cols - 1) * this.cellSize, (this.rows - 1) * this.cellSize, this.cellSize, this.cellSize);
+    // ctx.fillStyle = this.endColor;
+    // ctx.fillRect((this.cols - 1) * this.cellSize, (this.rows - 1) * this.cellSize, this.cellSize, this.cellSize);
+    ctx.drawImage(endImg,(this.cols - 1) * this.cellSize, (this.rows - 1) * this.cellSize, this.cellSize, this.cellSize);
 
     ctx.strokeStyle = this.mazeColor;
     ctx.strokeRect(0, 0, mazeHeight, mazeWidth);
@@ -212,16 +213,19 @@ class Maze {
         }
         switch (this.cells[col][row].attribute) {
           case 1:
-            ctx.fillStyle = this.coinsColor;
-            ctx.fillRect((col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
+            // ctx.fillStyle = this.coinsColor;
+            // ctx.fillRect((col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
+            ctx.drawImage(coinsImg,(col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4)
             break;
           case 2:
-            ctx.fillStyle = this.toolsColor;
-            ctx.fillRect((col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
+            // ctx.fillStyle = this.toolsColor;
+            // ctx.fillRect((col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
+            ctx.drawImage(toolsImg,(col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4)
             break;
           case 3:
-            ctx.fillStyle = this.monsterColor;
-            ctx.fillRect((col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
+            // ctx.fillStyle = this.monsterColor;
+            // ctx.fillRect((col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
+            ctx.drawImage(monsterImg,(col * this.cellSize) + 2, (row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4)
             break;
 
           default:
@@ -230,12 +234,15 @@ class Maze {
       }
     }
 
-    ctx.fillStyle = this.playerColor;
-    ctx.beginPath();
-    ctx.moveTo((player.col * this.cellSize) + 2, (player.row * this.cellSize) + this.cellSize - 2);
-    ctx.lineTo((player.col * this.cellSize) + (this.cellSize / 2), (player.row * this.cellSize) + 2);
-    ctx.lineTo((player.col * this.cellSize) + this.cellSize - 2, (player.row * this.cellSize) + this.cellSize - 2);
-    ctx.fill();
+    
+    ctx.drawImage(playerImg,(player.col * this.cellSize) + 2, (player.row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4)
+
+    //ctx.fillStyle = this.playerColor;
+    // ctx.beginPath();
+    // ctx.moveTo((player.col * this.cellSize) + 2, (player.row * this.cellSize) + this.cellSize - 2);
+    // ctx.lineTo((player.col * this.cellSize) + (this.cellSize / 2), (player.row * this.cellSize) + 2);
+    // ctx.lineTo((player.col * this.cellSize) + this.cellSize - 2, (player.row * this.cellSize) + this.cellSize - 2);
+    // ctx.fill();
     //console.log((player.col * this.cellSize) + 14, (player.row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
     //ctx.fillRect((player.col * this.cellSize) + 2, (player.row * this.cellSize) + 2, this.cellSize - 4, this.cellSize - 4);
 
@@ -280,6 +287,18 @@ function onKeyDown(event) {
   maze.redraw();
 }
 
+var playerImg = new Image();
+playerImg.src ="/img/hero.jpg";
+var monsterImg = new Image();
+monsterImg.src ="/img/monster.jpg";
+var toolsImg = new Image();
+toolsImg.src ="/img/heart.jpg";
+var coinsImg = new Image();
+coinsImg.src ="/img/gold.jpg";
+var endImg = new Image();
+endImg.src ="/img/terminus.jpg";
+
+
 let isGoing = false;
 function onLoad() {
 
@@ -288,7 +307,7 @@ function onLoad() {
   ctx = canvas.getContext("2d");
   ctx.canvas.addEventListener('click', clickEvent, false);
   player = new Player();
-  maze = new Maze(n, n, 20);
+  maze = new Maze(n, n, 30);
   document.addEventListener("keydown", onKeyDown);
 
   refreshTip();
