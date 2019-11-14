@@ -6,6 +6,21 @@ let mazeWidth;
 let player;
 let n;//迷宫的大小
 
+
+let isGoing = false;
+function onLoad() {
+
+  n = 20;
+  canvas = document.getElementById("mainForm");
+  ctx = canvas.getContext("2d");
+  ctx.canvas.addEventListener('click', clickEvent, false);
+  player = new Player();
+  maze = new Maze(n, n, 30);
+  document.addEventListener("keydown", onKeyDown);
+
+  refreshTip();
+}
+
 class Player {
 
   constructor() {
@@ -141,6 +156,8 @@ class Maze {
               break;
           }
           if (currCell.row == 0 && currCell.col == 0)
+            currCell.attribute = 0;
+          if (currCell.row == this.rows-1 && currCell.col == this.cols-1)
             currCell.attribute = 0;
           if (foundNeighbor) {
             stack.push(nextCell);
@@ -299,19 +316,6 @@ var endImg = new Image();
 endImg.src ="/img/terminus.jpg";
 
 
-let isGoing = false;
-function onLoad() {
-
-  n = 16;
-  canvas = document.getElementById("mainForm");
-  ctx = canvas.getContext("2d");
-  ctx.canvas.addEventListener('click', clickEvent, false);
-  player = new Player();
-  maze = new Maze(n, n, 30);
-  document.addEventListener("keydown", onKeyDown);
-
-  refreshTip();
-}
 
 
 // var interval= setInterval(function () {
