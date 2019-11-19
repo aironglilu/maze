@@ -9,7 +9,7 @@ let n;//迷宫的大小
 
 let isGoing = false;
 function onLoad() {
-
+setTimeout(() => {
   n = 20;
   canvas = document.getElementById("mainForm");
   ctx = canvas.getContext("2d");
@@ -19,6 +19,9 @@ function onLoad() {
   document.addEventListener("keydown", onKeyDown);
 
   refreshTip();
+}, 1000);
+
+
 }
 
 class Player {
@@ -288,15 +291,15 @@ function onKeyDown(event) {
 }
 
 var playerImg = new Image();
-playerImg.src ="/img/hero.jpg";
+playerImg.src ="img/hero.jpg";
 var monsterImg = new Image();
-monsterImg.src ="/img/monster.jpg";
+monsterImg.src ="img/monster.jpg";
 var toolsImg = new Image();
-toolsImg.src ="/img/heart.jpg";
+toolsImg.src ="img/heart.jpg";
 var coinsImg = new Image();
-coinsImg.src ="/img/gold.jpg";
+coinsImg.src ="img/gold.jpg";
 var endImg = new Image();
-endImg.src ="/img/terminus.jpg";
+endImg.src ="img/terminus.jpg";
 
 
 
